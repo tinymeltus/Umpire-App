@@ -8,7 +8,10 @@ import '../widgets/number_of_sets.dart';
 class MatchScoresScreen extends StatefulWidget {
   const MatchScoresScreen({
     super.key,
-    required this.matchDetails, required this.numberOfSets, required this.teamAName, required this.teamBName,
+    required this.matchDetails,
+    required this.numberOfSets,
+    required this.teamAName,
+    required this.teamBName,
   });
 
   //variables
@@ -87,14 +90,10 @@ class _MatchScoresScreenState extends State<MatchScoresScreen> {
                           ),
                           const SizedBox(width: 20),
                           Column(
-                            children:  Column(
-                              children: [
-                                MatchScoresWidget(
-            numberOfSets: widget.numberOfSets,
-            teamAName: widget.teamAName,
-            teamBName: widget.teamBName,
-          ),
-                              ],
+                            children: MatchScoresWidget(
+                              numberOfSets: widget.numberOfSets,
+                              teamAName: widget.teamAName,
+                              teamBName: widget.teamBName,
                             ),
                           ),
                           // Add more set scores here
