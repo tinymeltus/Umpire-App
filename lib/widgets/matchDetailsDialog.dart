@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:the_umpire_app/screens/match_scores_screen.dart';
 
 import '../model/MatchDetails.dart';
-import '../screens/match_scores.dart';
 
 class MatchDetailsDialog extends StatefulWidget {
   const MatchDetailsDialog({super.key});
@@ -17,7 +17,9 @@ class _MatchDetailsDialogState extends State<MatchDetailsDialog> {
   TextEditingController _teamBNameController = TextEditingController();
   TextEditingController _numberOfSetsController = TextEditingController();
 
-   @override
+  int numberOfGamesPerSet = 6;
+
+  @override
   void dispose() {
     _teamANameController.dispose();
     _teamBNameController.dispose();
@@ -78,9 +80,9 @@ class _MatchDetailsDialogState extends State<MatchDetailsDialog> {
         ElevatedButton(
           onPressed: () {
             // Start match logic
-            
+
             Navigator.pop(context); // Close the dialog
-           _startMatch(context);
+            _startMatch(context);
           },
           child: const Text('Start'),
         ),
@@ -91,18 +93,51 @@ class _MatchDetailsDialogState extends State<MatchDetailsDialog> {
   //methods
   //passing player names
   void _startMatch(BuildContext context) {
-    // Assuming you've collected player names in text controllers
-    String teamAName = _teamANameController.text;
-    String teamBName = _teamBNameController.text;
-    int numberOfSets = int.parse(_numberOfSetsController.text);
+    // Get the text from the controllers
+    String teamAName = _teamANameController.text.trim();
+    String teamBName = _teamBNameController.text.trim();
+    String numberOfSetsText = _numberOfSetsController.text.trim();
 
-    MatchDetails matchDetails =
-        MatchDetails(teamAName: teamAName, teamBName: teamBName, numberOfSets: numberOfSets);
+    // Check if any of the fields are empty
+    if (teamAName.isEmpty || teamBName.isEmpty || numberOfSetsText.isEmpty) {
+      // Show a snackbar with an error message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please fill in all fields.'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    } else if (int.tryParse(numberOfSetsText) == null) {
+      // Show a snackbar with an error message for non-numeric input
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Number of Sets must be a valid number.'),
+          duration: Duration(seconds: 3),
+        ),
+      );
+    } else {
+      // All fields are filled and the number of sets is valid, proceed to start the match
+      int numberOfSets = int.parse(numberOfSetsText);
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => MatchScoresScreen(matchDetails: matchDetails, numberOfSets: numberOfSets, teamAName: teamAName, teamBName: teamBName,)),
-    );
+     
+      MatchDetails matchDetails = MatchDetails(
+        teamAName: teamAName,
+        teamBName: teamBName,
+        numberOfSets: numberOfSets,
+        numberOfGamesPerSet : numberOfGamesPerSet,
+      );
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MatchScoresScreen(
+            matchDetails: matchDetails,
+            numberOfSets: numberOfSets,
+            teamAName: teamAName,
+            teamBName: teamBName,
+          ),
+        ),
+      );
+    }
   }
 }

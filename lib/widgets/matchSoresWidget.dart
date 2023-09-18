@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'number_of_sets.dart';
+import 'GameSetScoresWidget.dart';
 
 class MatchScoresWidget extends StatefulWidget {
   final int numberOfSets; // Number of sets in the match
@@ -42,7 +42,7 @@ class _MatchScoresWidgetState extends State<MatchScoresWidget> {
 
         // Example: Display the scores for each set
         for (int setNumber = 0; setNumber < widget.numberOfSets; setNumber++)
-          SetScoresWidget(
+          GameSetScoresWidget(
             setNumber: setNumber + 1, // Adjust set number (1-based)
             scorePlayerA: setScores[setNumber][0],
             scorePlayerB: setScores[setNumber][1],

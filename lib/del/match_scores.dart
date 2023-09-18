@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:the_umpire_app/model/MatchDetails.dart';
 
 import '../widgets/matchSoresWidget.dart';
-import '../widgets/number_of_sets.dart';
+import '../widgets/GameSetScoresWidget.dart';
 
 class MatchScoresScreen extends StatefulWidget {
   const MatchScoresScreen({
@@ -90,11 +90,11 @@ class _MatchScoresScreenState extends State<MatchScoresScreen> {
                           ),
                           const SizedBox(width: 20),
                           Column(
-                            children: MatchScoresWidget(
-                              numberOfSets: widget.numberOfSets,
-                              teamAName: widget.teamAName,
-                              teamBName: widget.teamBName,
-                            ),
+                            // children: MatchScoresWidget(
+                            //   numberOfSets: widget.numberOfSets,
+                            //   teamAName: widget.teamAName,
+                            //   teamBName: widget.teamBName,
+                            // ),
                           ),
                           // Add more set scores here
                           Column(

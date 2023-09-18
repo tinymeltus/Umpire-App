@@ -3,6 +3,7 @@ import 'package:the_umpire_app/screens/settings.dart';
 
 import '../widgets/matchDetailsDialog.dart';
 import 'match_history.dart';
+import 'match_scores_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -85,7 +86,8 @@ class HomeScreen extends StatelessWidget {
               //TODO navigate to start match
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const MatchHistoryScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const MatchHistoryScreen()),
               );
             },
             icon: const Icon(Icons.history),
@@ -113,10 +115,9 @@ class HomeScreen extends StatelessWidget {
 
 void _showMatchDetailsDialog(BuildContext context) {
   showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return const MatchDetailsDialog();
-      },
-    );
-  }
-
+    context: context,
+    builder: (BuildContext context) {
+      return const MatchDetailsDialog();
+    },
+  );
+}

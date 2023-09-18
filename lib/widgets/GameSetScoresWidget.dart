@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class SetScoresWidget extends StatelessWidget {
+class GameSetScoresWidget extends StatelessWidget {
   final int setNumber;
   final int scorePlayerA;
   final int scorePlayerB;
 
-  const SetScoresWidget({
+  const GameSetScoresWidget({
     super.key,
     required this.setNumber,
     required this.scorePlayerA,
