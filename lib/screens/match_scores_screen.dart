@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:the_umpire_app/widgets/set_scores.dart';
 
 import '../model/MatchDetails.dart';
+import '../model/ScoreHistory.dart';
 import '../widgets/current_game_score.dart';
 import '../widgets/players_names.dart';
 import '../widgets/timer_widget.dart';
 
 class MatchScoresScreen extends StatefulWidget {
-  const MatchScoresScreen({
+  MatchScoresScreen({
     Key? key,
     required this.matchDetails,
     required this.numberOfSets,
@@ -19,6 +20,9 @@ class MatchScoresScreen extends StatefulWidget {
   final int numberOfSets;
   final String teamAName;
   final String teamBName;
+
+  // Declare scoreChangeHistory List
+  final List<ScoreChangeEvent> scoreChangeHistory = [];
 
   @override
   _MatchScoresScreenState createState() => _MatchScoresScreenState();
@@ -131,7 +135,13 @@ class _MatchScoresScreenState extends State<MatchScoresScreen> {
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    // Undo logic
+                    if (widget.scoreChangeHistory.isNotEmpty) {
+                      final lastChange = widget.scoreChangeHistory.removeLast();
+                      setState(() {
+                        scorePlayerA = lastChange.previousScorePlayerA;
+                        scorePlayerB = lastChange.previousScorePlayerB;
+                      });
+                    }
                   },
                   child: const Text('Undo'),
                 ),
@@ -149,8 +159,8 @@ class _MatchScoresScreenState extends State<MatchScoresScreen> {
                   final seconds = snapshot.data;
 
                   // Convert seconds into a formatted time string (you can use your own format)
-                  final minutes = seconds! ~/60;
-                  final remainingSeconds = seconds %60;
+                  final minutes = seconds! ~/ 60;
+                  final remainingSeconds = seconds % 60;
                   final timeString =
                       '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
 
@@ -170,6 +180,8 @@ class _MatchScoresScreenState extends State<MatchScoresScreen> {
   //count game scores
   //scoring rules with duece situation included
   void _incrementScore(String player) {
+    final lastChange = ScoreChangeEvent(scorePlayerA, scorePlayerB);
+    widget.scoreChangeHistory.add(lastChange);
     if (player == 'A') {
       if (scorePlayerA == 0) {
         scorePlayerA = 15;
@@ -219,6 +231,8 @@ class _MatchScoresScreenState extends State<MatchScoresScreen> {
         // Handle other cases or show an error message
       }
     } else if (player == 'B') {
+      final lastChange = ScoreChangeEvent(scorePlayerA, scorePlayerB);
+      widget.scoreChangeHistory.add(lastChange);
       if (scorePlayerB == 0) {
         scorePlayerB = 15;
       } else if (scorePlayerB == 15) {
