@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "55737290361",
+    "project_id": "umpireapp-ed8ab",
+    "storage_bucket": "umpireapp-ed8ab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:55737290361:android:4a16d3f0b92b68b1804ea8",
+        "android_client_info": {
+          "package_name": "com.android.application"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjpe2Kj71FXWZASLVEuZzgCWw7PwTW_FU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
