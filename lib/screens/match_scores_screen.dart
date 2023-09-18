@@ -3,8 +3,8 @@ import 'package:the_umpire_app/widgets/set_scores.dart';
 
 import '../model/MatchDetails.dart';
 import '../widgets/current_game_score.dart';
-import '../widgets/GameSetScoresWidget.dart';
 import '../widgets/players_names.dart';
+import '../widgets/timer_widget.dart';
 
 class MatchScoresScreen extends StatefulWidget {
   const MatchScoresScreen({
@@ -45,6 +45,20 @@ class _MatchScoresScreenState extends State<MatchScoresScreen> {
   // Add these two variables to track games won per set
   int gamesWonByPlayerAInSet = 0;
   int gamesWonByPlayerBInSet = 0;
+
+  GameTimer _gameTimer = GameTimer();
+
+  @override
+  void initState() {
+    super.initState();
+    _gameTimer.startTimer();
+  }
+
+  @override
+  void dispose() {
+    _gameTimer.dispose(); // Cancel the timer when the screen is disposed
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +142,24 @@ class _MatchScoresScreenState extends State<MatchScoresScreen> {
           Positioned(
             top: 0,
             right: 0,
-            child: Text('Game Time: 15:30'),
+            child: StreamBuilder<int>(
+              stream: _gameTimer.timerStream, // Use the timerStream
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  final seconds = snapshot.data;
+
+                  // Convert seconds into a formatted time string (you can use your own format)
+                  final minutes = seconds! ~/60;
+                  final remainingSeconds = seconds %60;
+                  final timeString =
+                      '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
+
+                  return Text('Game Time: $timeString');
+                } else {
+                  return Text('Game Time: 00:00'); // Initial value
+                }
+              },
+            ),
           ),
         ],
       ),

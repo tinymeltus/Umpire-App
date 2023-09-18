@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../screens/match_scores_screen.dart';
 
 class GameScoreWidget extends StatelessWidget {
   final int score;
