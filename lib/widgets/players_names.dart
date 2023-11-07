@@ -3,15 +3,28 @@ import 'package:flutter/material.dart';
 class PlayerNameWidget extends StatelessWidget {
   final String playerName;
 
-  PlayerNameWidget({required this.playerName});
+  const PlayerNameWidget({
+    required this.playerName,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Text(
-        playerName.toUpperCase(),
-        style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+    return Container(
+      decoration: BoxDecoration(border: Border.all(color: Colors.black)),
+      width: 150, // Specify the desired width for the player name box
+      child: FittedBox(
+        fit: BoxFit.scaleDown,
+        child: Container(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              playerName,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 20),
+            ),
+          ),
+        ),
       ),
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:the_umpire_app/widgets/set_scores.dart';
 
 import '../model/MatchDetails.dart';
@@ -74,19 +75,21 @@ class _MatchScoresScreenState extends State<MatchScoresScreen> {
               Row(
                 children: [
                   PlayerNameWidget(playerName: widget.teamAName),
-                  SetScoresWidget(
-                      playerName: widget.teamAName,
-                      gamesWon: gamesWonByPlayerAInSet),
                   GameScoreWidget(score: scorePlayerA),
+                  SetScoresWidget( //sets won  count
+                      playerName: widget.teamAName, setsWon: setsWonPlayerA),
+                  
+                  Text('Games won: $gamesPlayerA'),
                 ],
               ),
               Row(
                 children: [
                   PlayerNameWidget(playerName: widget.teamBName),
-                  SetScoresWidget(
-                      playerName: widget.teamBName,
-                      gamesWon: gamesWonByPlayerAInSet),
                   GameScoreWidget(score: scorePlayerB),
+                  SetScoresWidget( //sets won  count
+                      playerName: widget.teamBName, setsWon: setsWonPlayerB),
+                  
+                  Text('Games won: $gamesPlayerB'),
                 ],
               ),
 
@@ -115,6 +118,7 @@ class _MatchScoresScreenState extends State<MatchScoresScreen> {
                   onPressed: () {
                     _incrementScore('A');
                     print(scorePlayerA);
+                    _checkSetWinner();
                   },
                   child: Text('Point A'),
                 ),
@@ -122,6 +126,7 @@ class _MatchScoresScreenState extends State<MatchScoresScreen> {
                   onPressed: () {
                     _incrementScore('B');
                     print(scorePlayerB);
+                    _checkSetWinner();
                   },
                   child: Text('Point B'),
                 ),
@@ -190,176 +195,183 @@ class _MatchScoresScreenState extends State<MatchScoresScreen> {
   //methods
   //count game scores
   //scoring rules with duece situation included
- void _incrementScore(String player) {
-  final lastChange = ScoreChangeEvent(scorePlayerA, scorePlayerB);
-  widget.scoreChangeHistory.add(lastChange);
+  void _incrementScore(String player) {
+    final lastChange = ScoreChangeEvent(scorePlayerA, scorePlayerB);
+    widget.scoreChangeHistory.add(lastChange);
 
-  if (player == 'A') {
-    _handleScoringForPlayerA();
-  } else if (player == 'B') {
-    _handleScoringForPlayerB();
-  }
-
-  setState(() {});
-}
-
-void _handleScoringForPlayerA() {
-  if (scorePlayerA == 0) {
-    scorePlayerA = 15;
-  } else if (scorePlayerA == 15) {
-    scorePlayerA = 30;
-  } else if (scorePlayerA == 30) {
-    scorePlayerA = 40;
-  } else if (scorePlayerA == 40) {
-    if (scorePlayerB == 40) {
-      // Scores are tied at "deuce," increment by "Advantage" for Player A
-      scorePlayerA = 45; // "45" means "Advantage" for Player A
-      scorePlayerB = 40; // Reset Player B's score from 40 to 40
-      isDeuce = true;
-    } else if (scorePlayerB == 45) {
-      // Player B had "Advantage," scores are back to "deuce"
-      scorePlayerA = 40;
-      scorePlayerB = 40;
-      isDeuce = true;
-    } else {
-      // Player A wins the game
-      gamesPlayerA++; // Increment game count for Player A
-      scorePlayerA = 0; // Reset game score for Player A
-      scorePlayerB = 0; // Reset game score for Player B
+    if (player == 'A') {
+      _handleScoringForPlayerA();
+    } else if (player == 'B') {
+      _handleScoringForPlayerB();
     }
-  } else if (scorePlayerA == 45) {
-    // Player A has "Advantage"
-    scorePlayerA = 50; // "50" means "Game Point" for Player A
-  } else if (scorePlayerA == 50) {
-    // Player A wins the game
-    gamesPlayerA++; // Increment game count for Player A
-    scorePlayerA = 0; // Reset game score for Player A
-    scorePlayerB = 0; // Reset game score for Player B
-  } else {
-    // Handle other cases or show an error message
-  }
-}
 
-void _handleScoringForPlayerB() {
-  if (scorePlayerB == 0) {
-    scorePlayerB = 15;
-  } else if (scorePlayerB == 15) {
-    scorePlayerB = 30;
-  } else if (scorePlayerB == 30) {
-    scorePlayerB = 40;
-  } else if (scorePlayerB == 40) {
-    if (scorePlayerA == 40) {
-      // Scores are tied at "deuce," increment by "Advantage" for Player B
-      scorePlayerB = 45; // "45" means "Advantage" for Player B
-      scorePlayerA = 40; // Reset Player A's score from 40 to 40
-      isDeuce = true;
-    } else if (scorePlayerA == 45) {
-      // Player A had "Advantage," scores are back to "deuce"
+    setState(() {});
+  }
+
+  void _handleScoringForPlayerA() {
+    print(
+        'Before scoring: Player A score: $scorePlayerA, Player B score: $scorePlayerB');
+
+    if (scorePlayerA == 0) {
+      scorePlayerA = 15;
+    } else if (scorePlayerA == 15) {
+      scorePlayerA = 30;
+    } else if (scorePlayerA == 30) {
       scorePlayerA = 40;
-      scorePlayerB = 40;
-      isDeuce = true;
-    } else {
-      // Player B wins the game
-      gamesPlayerB++; // Increment game count for Player B
-      scorePlayerA = 0; // Reset game score for Player A
-      scorePlayerB = 0; // Reset game score for Player B
-    }
-  } else if (scorePlayerB == 45) {
-    // Player B has "Advantage"
-    scorePlayerB = 50; // "50" means "Game Point" for Player B
-  } else if (scorePlayerB == 50) {
-    // Player B wins the game
-    gamesPlayerB++; // Increment game count for Player B
-    scorePlayerA = 0; // Reset game score for Player A
-    scorePlayerB = 0; // Reset game score for Player B
-  } else {
-    // Handle other cases or show an error message
-  }
-}
-
-
-  //
-  String getTennisScore(int score) {
-    if (score == 0) {
-      return "0";
-    } else if (score == 15) {
-      return "15";
-    } else if (score == 30) {
-      return "30";
-    } else if (score == 40) {
-      return "40";
-    } else if (score == 45) {
-      return "AD";
-    } else if (score == 50) {
-      return "Game";
-    } else {
-      return "Unknown";
-    }
-  }
-
-  // Check for game winner and update gamesPlayerA or gamesPlayerB
-// Reset game scores to deuce (40-40) when applicable
-  void _checkGameWinner() {
-    if (scorePlayerA == 40 && scorePlayerB == 40) {
-      // Both players are at 40-40, indicating a "deuce" situation
-      // Handle deuce logic here, for example:
-      // This code sets both players' scores back to 40-40
-      scorePlayerA = 40;
-      scorePlayerB = 40;
-    } else if (scorePlayerA == 45) {
-      // Player A has "Advantage"
-      // Handle advantage logic here, for example:
-      // Player A wins the game
-      gamesPlayerA++; // Increment game count for Player A
-      scorePlayerA = 0; // Reset game score for Player A
-      scorePlayerB = 0; // Reset game score for Player B
-    } else if (scorePlayerB == 45) {
-      // Player B has "Advantage"
-      // Handle advantage logic here, for example:
-      // Player B wins the game
-      gamesPlayerB++; // Increment game count for Player B
-      scorePlayerA = 0; // Reset game score for Player A
-      scorePlayerB = 0; // Reset game score for Player B
-    } else {
-      // Handle other game-winning conditions
-      // For example, if none of the above conditions are met,
-      // you can consider it a normal game win for one of the players
-      if (scorePlayerA == 50) {
+    } else if (scorePlayerA == 40) {
+      if (scorePlayerB == 40) {
+        // Scores are tied at "deuce," increment by "Advantage" for Player A
+        scorePlayerA = 45; // "45" means "Advantage" for Player A
+        scorePlayerB = 40; // Reset Player B's score from 40 to 40
+        isDeuce = true;
+        print('Advantage for Player A');
+      } else if (scorePlayerB == 45) {
+        // Player B had "Advantage," scores are back to "deuce"
+        scorePlayerA = 40;
+        scorePlayerB = 40;
+        isDeuce = true;
+        print('Back to deuce');
+      } else {
         // Player A wins the game
         gamesPlayerA++; // Increment game count for Player A
         scorePlayerA = 0; // Reset game score for Player A
         scorePlayerB = 0; // Reset game score for Player B
-      } else if (scorePlayerB == 50) {
+        print('Player A wins the game');
+      }
+    } else if (scorePlayerA == 45) {
+      // Player A has "Advantage"
+      scorePlayerA = 50; // "50" means "Game Point" for Player A
+      print('Game Point for Player A');
+    } else if (scorePlayerA == 50) {
+      // Player A wins the game
+      gamesPlayerA++; // Increment game count for Player A
+      scorePlayerA = 0; // Reset game score for Player A
+      scorePlayerB = 0; // Reset game score for Player B
+      print('Player A wins the game');
+    } else {
+      // Handle other cases or show an error message
+      print('Unknown case');
+    }
+
+    print(
+        'After scoring: Player A score: $scorePlayerA, Player B score: $scorePlayerB');
+  }
+
+  void _handleScoringForPlayerB() {
+    print(
+        'Before scoring: Player A score: $scorePlayerA, Player B score: $scorePlayerB');
+
+    if (scorePlayerB == 0) {
+      scorePlayerB = 15;
+    } else if (scorePlayerB == 15) {
+      scorePlayerB = 30;
+    } else if (scorePlayerB == 30) {
+      scorePlayerB = 40;
+    } else if (scorePlayerB == 40) {
+      if (scorePlayerA == 40) {
+        // Scores are tied at "deuce," increment by "Advantage" for Player B
+        scorePlayerB = 45; // "45" means "Advantage" for Player B
+        scorePlayerA = 40; // Reset Player A's score from 40 to 40
+        isDeuce = true;
+        print('Advantage for Player B');
+      } else if (scorePlayerA == 45) {
+        // Player A had "Advantage," scores are back to "deuce"
+        scorePlayerA = 40;
+        scorePlayerB = 40;
+        isDeuce = true;
+        print('Back to deuce');
+      } else {
         // Player B wins the game
         gamesPlayerB++; // Increment game count for Player B
         scorePlayerA = 0; // Reset game score for Player A
         scorePlayerB = 0; // Reset game score for Player B
+        print('Player B wins the game');
       }
+    } else if (scorePlayerB == 45) {
+      // Player B has "Advantage"
+      scorePlayerB = 50; // "50" means "Game Point" for Player B
+      print('Game Point for Player B');
+    } else if (scorePlayerB == 50) {
+      // Player B wins the game
+      gamesPlayerB++; // Increment game count for Player B
+      scorePlayerA = 0; // Reset game score for Player A
+      scorePlayerB = 0; // Reset game score for Player B
+      print('Player B wins the game');
+    } else {
+      // Handle other cases or show an error message
+      print('Unknown case');
     }
+
+    print(
+        'After scoring: Player A score: $scorePlayerA, Player B score: $scorePlayerB');
+  }
+
+// Check for game winner and update gamesPlayerA or gamesPlayerB
+// Reset game scores to deuce (40-40) when applicable
+  void _checkGameWinner() {
+    if (scorePlayerA == 40 && scorePlayerB == 40 && !isDeuce) {
+      // Deuce situation
+      isDeuce = true;
+    } else if ((scorePlayerA == 45 || scorePlayerB == 45) && isDeuce) {
+      // Advantage situation, check if it's from deuce
+      isDeuce = false;
+    } else if ((scorePlayerA == 50 || scorePlayerB == 50) && !isDeuce) {
+      // Game over, declare winner and show message
+      if (scorePlayerA == 50) {
+        _showGameOutcomeMessage(widget.teamAName);
+        gamesPlayerA++; // Increment game count for Player A
+      } else {
+        _showGameOutcomeMessage(widget.teamBName);
+        gamesPlayerB++; // Increment game count for Player B
+      }
+      // Reset game score for both players
+      scorePlayerA = 0;
+      scorePlayerB = 0;
+      // Reset deuce situation
+      isDeuce = false;
+      print(isDeuce);
+    }
+  }
+
+  //toast message to show game winner
+  void _showGameOutcomeMessage(String winnerName) {
+    print('toast message');
+    Fluttertoast.showToast(
+      msg: 'Game over! $winnerName wins the game!',
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.CENTER,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.green,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
   }
 
   // Check for set winner and update setsPlayerA or setsPlayerB
   // Reset game scores and gamesPlayerA/gamesPlayerB to deuce (40-40) when applicable
   void _checkSetWinner() {
-    if (gamesPlayerA == widget.matchDetails.numberOfGamesPerSet ||
-        gamesPlayerB == widget.matchDetails.numberOfGamesPerSet) {
-      // Reset game scores to deuce (40-40)
-      scorePlayerA = 40;
-      scorePlayerB = 40;
+    if (gamesPlayerA >= widget.matchDetails.numberOfGamesPerSet ||
+        gamesPlayerB >= widget.matchDetails.numberOfGamesPerSet) {
+      // Check if the set is won by Player A
+      if (gamesPlayerA >= widget.matchDetails.numberOfGamesPerSet &&
+          gamesPlayerA - gamesPlayerB >= 2) {
+        setsWonPlayerA++; // Player A wins the set
+        print('A won');
+      }
+      // Check if the set is won by Player B
+      else if (gamesPlayerB >= widget.matchDetails.numberOfGamesPerSet &&
+          gamesPlayerB - gamesPlayerA >= 2) {
+        setsWonPlayerB++; // Player B wins the set
+        print('B won');
+      }
 
-      // Add the scores to the setScores list
-      setScores.add([gamesPlayerA, gamesPlayerB]);
+      // Reset game scores to 0-0 for the next set
+      scorePlayerA = 0;
+      scorePlayerB = 0;
 
       // Reset games won
       gamesPlayerA = 0;
       gamesPlayerB = 0;
-
-      // Increment sets won
-      if (gamesWonByPlayerAInSet > gamesWonByPlayerBInSet) {
-        setsWonPlayerA++;
-      } else {
-        setsWonPlayerB++;
-      }
     }
   }
 

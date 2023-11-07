@@ -2,15 +2,26 @@ import 'package:flutter/material.dart';
 
 class SetScoresWidget extends StatelessWidget {
   final String playerName;
-  final int gamesWon;
+  final int setsWon;
 
-  SetScoresWidget({required this.playerName, required this.gamesWon});
+  const SetScoresWidget({
+    required this.playerName,
+    required this.setsWon,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      'Games Won by $playerName: $gamesWon',
-      style: const TextStyle(fontSize: 18, color: Colors.greenAccent),
+    return  Container(
+        alignment: Alignment.center,
+        child: Text(
+          '$setsWon',
+          style: const TextStyle(
+            fontSize: 18,
+            backgroundColor: Colors.greenAccent,
+          ),
+        ),
+      
     );
   }
 }
