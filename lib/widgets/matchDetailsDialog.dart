@@ -19,9 +19,10 @@ class _MatchDetailsDialogState extends State<MatchDetailsDialog> {
   bool _isSingles = true; //Default game type
   TextEditingController teamANameController = TextEditingController();
   TextEditingController teamBNameController = TextEditingController();
-  TextEditingController numberOfSetsController = TextEditingController();
+  TextEditingController numberOfSetsController =
+      TextEditingController(); // also counts number of games in first-to games
 
-  int numberOfGamesPerSet = 6;
+  int numberOfGamesPerSet = 0;
 
   @override
   void dispose() {
@@ -70,7 +71,11 @@ class _MatchDetailsDialogState extends State<MatchDetailsDialog> {
           TextFormField(
             keyboardType: TextInputType.number,
             controller: numberOfSetsController,
-            decoration: InputDecoration(labelText: widget.matchType == 1 ? 'Games to be Played' : 'Sets to be Played',),
+            decoration: InputDecoration(
+              labelText: widget.matchType == 1
+                  ? 'Games to be Played'
+                  : 'Sets to be Played',
+            ),
           ),
         ],
       ),
@@ -84,6 +89,8 @@ class _MatchDetailsDialogState extends State<MatchDetailsDialog> {
         ElevatedButton(
           onPressed: () {
             // Start match logic
+            numberOfGamesPerSet = int.parse(numberOfSetsController.text.trim());
+            print(numberOfGamesPerSet);
             Navigator.pop(context); // Close the dialog
             _startMatch(context);
           },

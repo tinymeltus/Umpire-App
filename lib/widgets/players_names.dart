@@ -11,7 +11,7 @@ class PlayerNameWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(border: Border.all(color: Colors.black)),
+      decoration: BoxDecoration(border: Border.all(color: Colors.black, width: 3,)),
       width: 150, // Specify the desired width for the player name box
       child: FittedBox(
         fit: BoxFit.scaleDown,
