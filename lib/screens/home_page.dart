@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:the_umpire_app/screens/settings.dart';
 
+import '../model/MatchDetails.dart';
 import '../widgets/matchDetailsDialog.dart';
 import 'match_history.dart';
-import 'match_scores_screen.dart';
+
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -33,7 +34,7 @@ class HomeScreen extends StatelessWidget {
       //bottom navigation bar
       bottomNavigationBar: BottomAppBar(
         color: Colors.black,
-        shape: CircularNotchedRectangle(),
+        shape: const CircularNotchedRectangle(),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
@@ -47,7 +48,7 @@ class HomeScreen extends StatelessWidget {
               },
             ),
             IconButton(
-              icon: Icon(Icons.settings, color: Colors.white),
+              icon: const Icon(Icons.settings, color: Colors.white),
               onPressed: () {
                 // Open settings or navigate to settings screen
               },
@@ -60,11 +61,11 @@ class HomeScreen extends StatelessWidget {
         onPressed: () {
           // Perform action when FAB is pressed
         },
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black,
         child: const Icon(
           Icons.add,
         ),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
       ),
       body: Center(
           child: Column(
@@ -73,10 +74,22 @@ class HomeScreen extends StatelessWidget {
           ElevatedButton.icon(
             onPressed: () {
               //TODO: navigate to start match
-              _showMatchDetailsDialog(context);
+                _showMatchDetailsDialog(context, matchType: 2);
+                print('normal game');
             },
             label: const Text('Start Match'),
             icon: const Icon(Icons.start),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Navigate to Match Details Dialog
+                _showMatchDetailsDialog(context, matchType: 1);
+                print('first-To game');
+            },
+            child: const Text('First Off Match'),
           ),
           const SizedBox(
             height: 20,
@@ -113,11 +126,11 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-void _showMatchDetailsDialog(BuildContext context) {
-  showDialog(
+Future<MatchDetails?> _showMatchDetailsDialog(BuildContext context, {required int matchType}) async {
+  return await showDialog<MatchDetails>(
     context: context,
     builder: (BuildContext context) {
-      return const MatchDetailsDialog();
+      return MatchDetailsDialog(matchType: matchType,);
     },
   );
 }

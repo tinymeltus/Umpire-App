@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:the_umpire_app/screens/match_scores_screen.dart';
 
 import '../model/MatchDetails.dart';
+import '../screens/first_to_scoring_screen.dart';
 
 class MatchDetailsDialog extends StatefulWidget {
-  const MatchDetailsDialog({super.key});
+  const MatchDetailsDialog({Key? key, required this.matchType})
+      : super(key: key);
+
+  final int matchType;
 
   @override
   State<MatchDetailsDialog> createState() => _MatchDetailsDialogState();
@@ -13,16 +17,16 @@ class MatchDetailsDialog extends StatefulWidget {
 class _MatchDetailsDialogState extends State<MatchDetailsDialog> {
   //variables
   bool _isSingles = true; //Default game type
-  TextEditingController _teamANameController = TextEditingController();
-  TextEditingController _teamBNameController = TextEditingController();
-  TextEditingController _numberOfSetsController = TextEditingController();
+  TextEditingController teamANameController = TextEditingController();
+  TextEditingController teamBNameController = TextEditingController();
+  TextEditingController numberOfSetsController = TextEditingController();
 
   int numberOfGamesPerSet = 6;
 
   @override
   void dispose() {
-    _teamANameController.dispose();
-    _teamBNameController.dispose();
+    teamANameController.dispose();
+    teamBNameController.dispose();
     super.dispose();
   }
 
@@ -54,19 +58,19 @@ class _MatchDetailsDialogState extends State<MatchDetailsDialog> {
             ],
           ),
           TextFormField(
-            controller: _teamANameController,
+            controller: teamANameController,
             decoration: InputDecoration(
                 labelText: _isSingles == true ? 'Player 1' : 'Team A'),
           ),
           TextFormField(
-            controller: _teamBNameController,
+            controller: teamBNameController,
             decoration: InputDecoration(
                 labelText: _isSingles == true ? 'Player 2' : 'Team B'),
           ),
           TextFormField(
             keyboardType: TextInputType.number,
-            controller: _numberOfSetsController,
-            decoration: const InputDecoration(labelText: 'Sets to be Played'),
+            controller: numberOfSetsController,
+            decoration: InputDecoration(labelText: widget.matchType == 1 ? 'Games to be Played' : 'Sets to be Played',),
           ),
         ],
       ),
@@ -80,7 +84,6 @@ class _MatchDetailsDialogState extends State<MatchDetailsDialog> {
         ElevatedButton(
           onPressed: () {
             // Start match logic
-
             Navigator.pop(context); // Close the dialog
             _startMatch(context);
           },
@@ -94,9 +97,9 @@ class _MatchDetailsDialogState extends State<MatchDetailsDialog> {
   //passing player names
   void _startMatch(BuildContext context) {
     // Get the text from the controllers
-    String teamAName = _teamANameController.text.trim();
-    String teamBName = _teamBNameController.text.trim();
-    String numberOfSetsText = _numberOfSetsController.text.trim();
+    String teamAName = teamANameController.text.trim();
+    String teamBName = teamBNameController.text.trim();
+    String numberOfSetsText = numberOfSetsController.text.trim();
 
     // Check if any of the fields are empty
     if (teamAName.isEmpty || teamBName.isEmpty || numberOfSetsText.isEmpty) {
@@ -116,28 +119,42 @@ class _MatchDetailsDialogState extends State<MatchDetailsDialog> {
         ),
       );
     } else {
-      // All fields are filled and the number of sets is valid, proceed to start the match
+      // All fields are filled and the number of sets is valid, proceed to start the whichever match selected
       int numberOfSets = int.parse(numberOfSetsText);
 
-     
       MatchDetails matchDetails = MatchDetails(
         teamAName: teamAName,
         teamBName: teamBName,
         numberOfSets: numberOfSets,
-        numberOfGamesPerSet : numberOfGamesPerSet,
+        numberOfGamesPerSet: numberOfGamesPerSet,
       );
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MatchScoresScreen(
-            matchDetails: matchDetails,
-            numberOfSets: numberOfSets,
-            teamAName: teamAName,
-            teamBName: teamBName,
+      if (widget.matchType == 1) {
+        // Navigate to FirstToScoringScreen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => FirstToScoring(
+              matchDetails: matchDetails,
+              numberOfSets: numberOfSets,
+              teamAName: teamAName,
+              teamBName: teamBName,
+            ),
           ),
-        ),
-      );
+        );
+      } else if (widget.matchType == 2) {
+        // Navigate to MatchScoresScreen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MatchScoresScreen(
+              matchDetails: matchDetails,
+              numberOfSets: numberOfSets,
+              teamAName: teamAName,
+              teamBName: teamBName,
+            ),
+          ),
+        );
+      }
     }
   }
 }
