@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:the_umpire_app/widgets/set_scores.dart';
 
@@ -58,138 +59,152 @@ class _MatchScoresScreenState extends State<MatchScoresScreen> {
 
   @override
   void dispose() {
-    _gameTimer.dispose(); // Cancel the timer when the screen is disposed
+    // Reset preferred orientations to allow any orientation
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Match Scores'),
-      ),
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              Row(
-                children: [
-                  PlayerNameWidget(playerName: widget.teamAName),
-                  GameScoreWidget(score: scorePlayerA),
-                  SetScoresWidget( //sets won  count
-                      playerName: widget.teamAName, setsWon: setsWonPlayerA),
-                  
-                  Text('Games won: $gamesPlayerA'),
-                ],
-              ),
-              Row(
-                children: [
-                  PlayerNameWidget(playerName: widget.teamBName),
-                  GameScoreWidget(score: scorePlayerB),
-                  SetScoresWidget( //sets won  count
-                      playerName: widget.teamBName, setsWon: setsWonPlayerB),
-                  
-                  Text('Games won: $gamesPlayerB'),
-                ],
-              ),
-
-              // Other widgets can be added here...
-              Expanded(
-                child: ListView.builder(
-                  itemCount: setScores.length,
-                  itemBuilder: (context, index) {
-                    final setScore = setScores[index];
-                    final setNumber = index + 1;
-
-                    return Text(
-                        'Set $setNumber: ${setScore[0]} - ${setScore[1]}');
-                  },
-                ),
-              )
-            ],
-          ),
-
-          // buttons
-          Positioned(
-            bottom: 0,
-            child: Row(
+    // potrait screen orientation
+    return Builder(builder: (context) {
+      SystemChrome.setPreferredOrientations([
+        DeviceOrientation.landscapeLeft,
+      ]);
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Match Scores'),
+        ),
+        body: Stack(
+          children: [
+            Column(
               children: [
-                ElevatedButton(
-                  onPressed: () {
-                    _incrementScore('A');
-                    print(scorePlayerA);
-                    _checkSetWinner();
-                  },
-                  child: Text('Point A'),
+                Row(
+                  children: [
+                    PlayerNameWidget(playerName: widget.teamAName),
+                    GameScoreWidget(score: scorePlayerA),
+                    SetScoresWidget(
+                        //sets won  count
+                        playerName: widget.teamAName,
+                        setsWon: setsWonPlayerA),
+                    Text('Games won: $gamesPlayerA'),
+                  ],
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    _incrementScore('B');
-                    print(scorePlayerB);
-                    _checkSetWinner();
-                  },
-                  child: Text('Point B'),
+                Row(
+                  children: [
+                    PlayerNameWidget(playerName: widget.teamBName),
+                    GameScoreWidget(score: scorePlayerB),
+                    SetScoresWidget(
+                        //sets won  count
+                        playerName: widget.teamBName,
+                        setsWon: setsWonPlayerB),
+                    Text('Games won: $gamesPlayerB'),
+                  ],
                 ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Update game logic
-                    Navigator.pop(context);
-                  },
-                  child: const Text('Game'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Update set logic
-                  },
-                  child: const Text('Set'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    // Start Tiebreak logic
-                  },
-                  child: const Text('Tiebreak'),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    if (widget.scoreChangeHistory.isNotEmpty) {
-                      final lastChange = widget.scoreChangeHistory.removeLast();
-                      setState(() {
-                        scorePlayerA = lastChange.previousScorePlayerA;
-                        scorePlayerB = lastChange.previousScorePlayerB;
-                      });
-                    }
-                  },
-                  child: const Text('Undo'),
-                ),
+
+                // Other widgets can be added here...
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: setScores.length,
+                    itemBuilder: (context, index) {
+                      final setScore = setScores[index];
+                      final setNumber = index + 1;
+
+                      return Text(
+                          'Set $setNumber: ${setScore[0]} - ${setScore[1]}');
+                    },
+                  ),
+                )
               ],
             ),
-          ),
-          // Timer
-          Positioned(
-            top: 0,
-            right: 0,
-            child: StreamBuilder<int>(
-              stream: _gameTimer.timerStream, // Use the timerStream
-              builder: (context, snapshot) {
-                if (snapshot.hasData) {
-                  final seconds = snapshot.data;
 
-                  // Convert seconds into a formatted time string (you can use your own format)
-                  final minutes = seconds! ~/ 60;
-                  final remainingSeconds = seconds % 60;
-                  final timeString =
-                      '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
-
-                  return Text('Game Time: $timeString');
-                } else {
-                  return Text('Game Time: 00:00'); // Initial value
-                }
-              },
+            // buttons
+            Positioned(
+              bottom: 0,
+              child: Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      _incrementScore('A');
+                      print(scorePlayerA);
+                      _checkSetWinner();
+                    },
+                    child: Text('Point A'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      _incrementScore('B');
+                      print(scorePlayerB);
+                      _checkSetWinner();
+                    },
+                    child: Text('Point B'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Update game logic
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Game'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Update set logic
+                    },
+                    child: const Text('Set'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      // Start Tiebreak logic
+                    },
+                    child: const Text('Tiebreak'),
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (widget.scoreChangeHistory.isNotEmpty) {
+                        final lastChange =
+                            widget.scoreChangeHistory.removeLast();
+                        setState(() {
+                          scorePlayerA = lastChange.previousScorePlayerA;
+                          scorePlayerB = lastChange.previousScorePlayerB;
+                        });
+                      }
+                    },
+                    child: const Text('Undo'),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+            // Timer
+            Positioned(
+              top: 0,
+              right: 0,
+              child: StreamBuilder<int>(
+                stream: _gameTimer.timerStream, // Use the timerStream
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final seconds = snapshot.data;
+
+                    // Convert seconds into a formatted time string (you can use your own format)
+                    final minutes = seconds! ~/ 60;
+                    final remainingSeconds = seconds % 60;
+                    final timeString =
+                        '$minutes:${remainingSeconds.toString().padLeft(2, '0')}';
+
+                    return Text('Game Time: $timeString');
+                  } else {
+                    return Text('Game Time: 00:00'); // Initial value
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      );
+    });
   }
 
   //methods
