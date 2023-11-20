@@ -7,9 +7,18 @@ class GameScoreWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      getTennisScore(score),
-      style: const TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+    return FittedBox(
+      fit: BoxFit.fitWidth,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Text(
+          getTennisScore(score),
+          style: const TextStyle(
+            fontSize: 60,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
     );
   }
 

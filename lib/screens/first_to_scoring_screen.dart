@@ -85,27 +85,28 @@ class _FirstToScoringState extends State<FirstToScoring> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     PlayerNameWidget(playerName: widget.teamAName),
-                    Container(
-                        width: 30,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black, width: 3)),
-                        child: GameScoreWidget(score: scorePlayerA)),
-                    // SetScoresWidget(
-                    //     //sets won  count
-                    //     playerName: widget.teamAName,
-                    //     setsWon: setsWonPlayerA),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    GameScoreWidget(score: scorePlayerA),
                     SizedBox(width: 20),
-                    //games won
+                    //games won widget
                     Container(
-                      padding: EdgeInsets.all(8),
-                      width: 30,
+                      padding: const EdgeInsets.all(8),
+                      width: 50,
                       decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black, width: 3)),
-                      child: Text(
-                        '$gamesPlayerA',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                        border: Border.all(
+                          color: Colors.black,
+                          width: 2,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '$gamesPlayerA',
+                          style: const TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -116,27 +117,28 @@ class _FirstToScoringState extends State<FirstToScoring> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     PlayerNameWidget(playerName: widget.teamBName),
-                    Container(
-                        width: 30,
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black, width: 3)),
-                        child: GameScoreWidget(score: scorePlayerB)),
-                    // SetScoresWidget(
-                    //     //sets won  count
-                    //     playerName: widget.teamBName,
-                    //     setsWon: setsWonPlayerB),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    GameScoreWidget(score: scorePlayerB),
                     SizedBox(width: 20),
-                    //games won
+                    //games won widget
                     Container(
-                      width: 30,
+                      width: 50,
                       padding: EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                          border: Border.all(color: Colors.black, width: 3)),
-                      child: Text(
-                        '$gamesPlayerB',
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                        border: Border.all(
+                          color: Colors.black,
+                          width: 2,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '$gamesPlayerB',
+                          style: const TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -161,58 +163,66 @@ class _FirstToScoringState extends State<FirstToScoring> {
 
             // buttons
             Positioned(
-              bottom: 0,
-              child: Row(
-                children: [
-                  ElevatedButton(
-                    onPressed: () {
-                      _incrementScore('A');
-                      print(scorePlayerA);
-                      _checkGameWinner();
-                    },
-                    child: Text('Point A'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      _incrementScore('B');
-                      print(scorePlayerB);
-                      _checkGameWinner();
-                    },
-                    child: Text('Point B'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Update game logic
-                      Navigator.pop(context);
-                    },
-                    child: const Text('Game'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Update set logic
-                    },
-                    child: const Text('Set'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      // Start Tiebreak logic
-                    },
-                    child: const Text('Tiebreak'),
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      if (widget.scoreChangeHistory.isNotEmpty) {
-                        final lastChange =
-                            widget.scoreChangeHistory.removeLast();
-                        setState(() {
-                          scorePlayerA = lastChange.previousScorePlayerA;
-                          scorePlayerB = lastChange.previousScorePlayerB;
-                        });
-                      }
-                    },
-                    child: const Text('Undo'),
-                  ),
-                ],
+              bottom: 0, left: 60,
+              child: Container(
+                padding: const EdgeInsets.only(bottom: 10,left:10 ),
+                child: Row(
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        _incrementScore('A');
+                        print(scorePlayerA);
+                        _checkGameWinner();
+                      },
+                      child: Text('Point A'),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        _incrementScore('B');
+                        print(scorePlayerB);
+                        _checkGameWinner();
+                      },
+                      child: Text('Point B'),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Update game logic
+                        Navigator.pop(context);
+                      },
+                      child: const Text('Game'),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Update set logic
+                      },
+                      child: const Text('Set'),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Start Tiebreak logic
+                      },
+                      child: const Text('Tiebreak'),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        if (widget.scoreChangeHistory.isNotEmpty) {
+                          final lastChange =
+                              widget.scoreChangeHistory.removeLast();
+                          setState(() {
+                            scorePlayerA = lastChange.previousScorePlayerA;
+                            scorePlayerB = lastChange.previousScorePlayerB;
+                          });
+                        }
+                      },
+                      child: const Text('Undo'),
+                    ),
+                  ],
+                ),
               ),
             ),
             // Timer
